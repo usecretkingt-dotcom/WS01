@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>SafeHer - Profile</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+}
+
+body{
+background:#f5f7fb;
+display:flex;
+min-height:100vh;
+transition:.3s;
+}
+
+.sidebar{
+width:260px;
+background:#111827;
+color:white;
+padding:30px 20px;
+position:fixed;
+height:100%;
+}
+
+.logo{
+font-size:28px;
+font-weight:700;
+text-align:center;
+margin-bottom:40px;
+color:#ff4d79;
+}
+
+.sidebar a{
+display:block;
+padding:14px;
+margin-bottom:10px;
+text-decoration:none;
+color:white;
+border-radius:10px;
+transition:.3s;
+}
+
+.sidebar a:hover{
+background:#ff4d79;
+}
+
+.main{
+margin-left:260px;
+padding:30px;
+width:100%;
+}
+
+.profile-card{
+background:white;
+padding:30px;
+border-radius:20px;
+box-shadow:0 5px 15px rgba(0,0,0,.08);
+max-width:800px;
+margin:auto;
+}
+
+.profile-header{
+text-align:center;
+margin-bottom:30px;
+}
+
+.profile-pic{
+width:140px;
+height:140px;
+border-radius:50%;
+object-fit:cover;
+border:4px solid #ff4d79;
+}
+
+.upload-btn{
+margin-top:10px;
+}
+
+h2{
+margin-top:15px;
+}
+
+.form-group{
+margin-bottom:15px;
+}
+
+label{
+display:block;
+margin-bottom:8px;
+font-weight:500;
+}
+
+input{
+width:100%;
+padding:12px;
+border:1px solid #ddd;
+border-radius:10px;
+}
+
+.btn{
+background:#ff4d79;
+color:white;
+border:none;
+padding:12px 20px;
+border-radius:10px;
+cursor:pointer;
+margin-top:10px;
+}
+
+.btn:hover{
+background:#ff2e65;
+}
+
+.settings{
+margin-top:30px;
+padding-top:20px;
+border-top:1px solid #eee;
+}
+
+.toggle{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:15px;
+}
+
+.dark{
+background:#121212;
+color:white;
+}
+
+.dark .profile-card{
+background:#1e1e1e;
+}
+
+.dark input{
+background:#2a2a2a;
+color:white;
+border:1px solid #444;
+}
+
+@media(max-width:900px){
+
+.sidebar{
+position:relative;
+width:100%;
+height:auto;
+}
+
+.main{
+margin-left:0;
+}
+
+body{
+flex-direction:column;
+}
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="sidebar">
+
+<div class="logo">
+🛡 SafeHer
+</div>
+
+<a href="dashboard.html">🏠 Dashboard</a>
+<a href="contacts.html">👨‍👩‍👧 Contacts</a>
+<a href="report.html">📝 Report Incident</a>
+<a href="profile.html">👤 Profile</a>
+<a href="index.html">🚪 Logout</a>
+
+</div>
+
+<div class="main">
+
+<div class="profile-card">
+
+<div class="profile-header">
+
+<img
+src="https://via.placeholder.com/140"
+id="profileImage"
+class="profile-pic">
+
+<br>
+
+<input
+type="file"
+id="imageUpload"
+class="upload-btn"
+accept="image/*">
+
+<h2 id="displayName">
+User Name
+</h2>
+
+<p>
+SafeHer Member
+</p>
+
+</div>
+
+<div class="form-group">
+
+<label>Full Name</label>
+
+<input
+type="text"
+id="name"
+placeholder="Enter Name">
+
+</div>
+
+<div class="form-group">
+
+<label>Email</label>
+
+<input
+type="email"
+id="email"
+placeholder="Enter Email">
+
+</div>
+
+<div class="form-group">
+
+<label>Phone Number</label>
+
+<input
+type="tel"
+id="phone"
+placeholder="Enter Phone Number">
+
+</div>
+
+<button
+class="btn"
+onclick="saveProfile()">
+
+Save Profile
+
+</button>
+
+<div class="settings">
+
+<h3>
+Settings
+</h3>
+
+<div class="toggle">
+
+<span>
+🌙 Dark Mode
+</span>
+
+<button
+class="btn"
+onclick="toggleDarkMode()">
+
+Toggle
+
+</button>
+
+</div>
+
+<div class="toggle">
+
+<span>
+📍 Share Location During SOS
+</span>
+
+<input
+type="checkbox"
+checked>
+
+</div>
+
+<div class="toggle">
+
+<span>
+📲 Notify Trusted Contacts
+</span>
+
+<input
+type="checkbox"
+checked>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+const imageUpload =
+document.getElementById(
+"imageUpload"
+);
+
+imageUpload.addEventListener(
+"change",
+function(){
+
+const file =
+this.files[0];
+
+if(file){
+
+document.getElementById(
+"profileImage"
+).src =
+URL.createObjectURL(file);
+
+}
+
+}
+);
+
+function saveProfile(){
+
+const profile = {
+
+name:
+document.getElementById(
+"name"
+).value,
+
+email:
+document.getElementById(
+"email"
+).value,
+
+phone:
+document.getElementById(
+"phone"
+).value
+
+};
+
+localStorage.setItem(
+"safeherProfile",
+JSON.stringify(profile)
+);
+
+document.getElementById(
+"displayName"
+).innerText =
+profile.name || "User Name";
+
+alert(
+"Profile Saved Successfully!"
+);
+
+}
+
+function loadProfile(){
+
+const profile =
+JSON.parse(
+localStorage.getItem(
+"safeherProfile"
+)
+);
+
+if(profile){
+
+document.getElementById(
+"name"
+).value =
+profile.name || "";
+
+document.getElementById(
+"email"
+).value =
+profile.email || "";
+
+document.getElementById(
+"phone"
+).value =
+profile.phone || "";
+
+document.getElementById(
+"displayName"
+).innerText =
+profile.name || "User Name";
+
+}
+
+}
+
+function toggleDarkMode(){
+
+document.body.classList.toggle(
+"dark"
+);
+
+}
+
+loadProfile();
+
+</script>
+
+</body>
+</html>

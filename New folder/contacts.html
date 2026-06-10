@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>SafeHer - Trusted Contacts</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+}
+
+body{
+background:#f5f7fb;
+display:flex;
+min-height:100vh;
+}
+
+.sidebar{
+width:260px;
+background:#111827;
+color:white;
+padding:30px 20px;
+position:fixed;
+height:100%;
+}
+
+.logo{
+font-size:28px;
+font-weight:700;
+margin-bottom:40px;
+text-align:center;
+color:#ff4d79;
+}
+
+.sidebar a{
+display:block;
+padding:14px;
+margin-bottom:10px;
+text-decoration:none;
+color:white;
+border-radius:10px;
+transition:.3s;
+}
+
+.sidebar a:hover{
+background:#ff4d79;
+}
+
+.main{
+margin-left:260px;
+padding:30px;
+width:100%;
+}
+
+.page-title{
+margin-bottom:25px;
+}
+
+.form-box{
+background:white;
+padding:25px;
+border-radius:20px;
+box-shadow:0 5px 15px rgba(0,0,0,.08);
+margin-bottom:25px;
+}
+
+input,select{
+width:100%;
+padding:14px;
+margin-bottom:12px;
+border:1px solid #ddd;
+border-radius:10px;
+}
+
+.btn{
+background:#ff4d79;
+color:white;
+border:none;
+padding:12px 20px;
+border-radius:10px;
+cursor:pointer;
+}
+
+.search{
+margin-bottom:20px;
+}
+
+.contact-grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+gap:20px;
+}
+
+.contact-card{
+background:white;
+padding:20px;
+border-radius:20px;
+box-shadow:0 5px 15px rgba(0,0,0,.08);
+}
+
+.contact-card h3{
+color:#ff4d79;
+margin-bottom:10px;
+}
+
+.priority{
+display:inline-block;
+padding:5px 10px;
+border-radius:20px;
+font-size:12px;
+background:#ffe5ec;
+color:#ff4d79;
+margin-bottom:10px;
+}
+
+.delete-btn{
+background:red;
+color:white;
+border:none;
+padding:10px 15px;
+border-radius:8px;
+cursor:pointer;
+margin-top:10px;
+}
+
+@media(max-width:900px){
+
+.sidebar{
+position:relative;
+width:100%;
+height:auto;
+}
+
+.main{
+margin-left:0;
+}
+
+body{
+flex-direction:column;
+}
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="sidebar">
+
+<div class="logo">
+🛡 SafeHer
+</div>
+
+<a href="dashboard.html">🏠 Dashboard</a>
+<a href="contacts.html">👨‍👩‍👧 Contacts</a>
+<a href="report.html">📝 Report Incident</a>
+<a href="profile.html">👤 Profile</a>
+<a href="index.html">🚪 Logout</a>
+
+</div>
+
+<div class="main">
+
+<h1 class="page-title">
+Trusted Contacts
+</h1>
+
+<div class="form-box">
+
+<input
+type="text"
+id="name"
+placeholder="Contact Name">
+
+<input
+type="tel"
+id="phone"
+placeholder="Phone Number">
+
+<select id="priority">
+
+<option value="Primary">
+Primary Contact
+</option>
+
+<option value="Secondary">
+Secondary Contact
+</option>
+
+<option value="Emergency">
+Emergency Contact
+</option>
+
+</select>
+
+<button class="btn" onclick="addContact()">
+Add Contact
+</button>
+
+</div>
+
+<input
+type="text"
+id="search"
+class="search"
+placeholder="Search Contacts..."
+onkeyup="searchContact()">
+
+<div
+class="contact-grid"
+id="contactContainer">
+</div>
+
+</div>
+
+<script>
+
+let contacts =
+JSON.parse(
+localStorage.getItem("safeherContacts")
+) || [];
+
+function saveContacts(){
+
+localStorage.setItem(
+"safeherContacts",
+JSON.stringify(contacts)
+);
+
+}
+
+function addContact(){
+
+const name =
+document.getElementById("name").value;
+
+const phone =
+document.getElementById("phone").value;
+
+const priority =
+document.getElementById("priority").value;
+
+if(!name || !phone){
+
+alert("Fill all fields");
+return;
+
+}
+
+contacts.push({
+
+name,
+phone,
+priority
+
+});
+
+saveContacts();
+
+renderContacts();
+
+document.getElementById("name").value="";
+document.getElementById("phone").value="";
+
+}
+
+function deleteContact(index){
+
+contacts.splice(index,1);
+
+saveContacts();
+
+renderContacts();
+
+}
+
+function renderContacts(filtered = contacts){
+
+const container =
+document.getElementById(
+"contactContainer"
+);
+
+container.innerHTML="";
+
+filtered.forEach((contact,index)=>{
+
+container.innerHTML += `
+
+<div class="contact-card">
+
+<div class="priority">
+${contact.priority}
+</div>
+
+<h3>${contact.name}</h3>
+
+<p>📞 ${contact.phone}</p>
+
+<button
+class="delete-btn"
+onclick="deleteContact(${index})">
+Delete
+</button>
+
+</div>
+
+`;
+
+});
+
+}
+
+function searchContact(){
+
+const query =
+document.getElementById("search")
+.value
+.toLowerCase();
+
+const filtered =
+contacts.filter(contact =>
+
+contact.name
+.toLowerCase()
+.includes(query)
+
+);
+
+renderContacts(filtered);
+
+}
+
+renderContacts();
+
+</script>
+
+</body>
+</html>

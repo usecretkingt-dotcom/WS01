@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>SafeHer - Incident Report</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+}
+
+body{
+background:#f5f7fb;
+display:flex;
+min-height:100vh;
+}
+
+.sidebar{
+width:260px;
+background:#111827;
+color:white;
+padding:30px 20px;
+position:fixed;
+height:100%;
+}
+
+.logo{
+font-size:28px;
+font-weight:700;
+text-align:center;
+margin-bottom:40px;
+color:#ff4d79;
+}
+
+.sidebar a{
+display:block;
+padding:14px;
+margin-bottom:10px;
+color:white;
+text-decoration:none;
+border-radius:10px;
+transition:.3s;
+}
+
+.sidebar a:hover{
+background:#ff4d79;
+}
+
+.main{
+margin-left:260px;
+padding:30px;
+width:100%;
+}
+
+.page-title{
+margin-bottom:25px;
+}
+
+.report-box{
+background:white;
+padding:30px;
+border-radius:20px;
+box-shadow:0 5px 15px rgba(0,0,0,.08);
+margin-bottom:25px;
+}
+
+input,
+textarea,
+select{
+width:100%;
+padding:14px;
+margin-bottom:15px;
+border:1px solid #ddd;
+border-radius:10px;
+}
+
+.btn{
+background:#ff4d79;
+color:white;
+border:none;
+padding:14px 20px;
+border-radius:10px;
+cursor:pointer;
+font-weight:600;
+}
+
+.btn:hover{
+background:#ff2e65;
+}
+
+.preview{
+margin-top:10px;
+max-width:250px;
+display:none;
+border-radius:10px;
+}
+
+.status-box{
+background:white;
+padding:25px;
+border-radius:20px;
+box-shadow:0 5px 15px rgba(0,0,0,.08);
+}
+
+.status-card{
+padding:15px;
+background:#fdf2f8;
+border-left:5px solid #ff4d79;
+border-radius:10px;
+margin-bottom:15px;
+}
+
+@media(max-width:900px){
+
+.sidebar{
+position:relative;
+width:100%;
+height:auto;
+}
+
+.main{
+margin-left:0;
+}
+
+body{
+flex-direction:column;
+}
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="sidebar">
+
+<div class="logo">
+🛡 SafeHer
+</div>
+
+<a href="dashboard.html">🏠 Dashboard</a>
+<a href="contacts.html">👨‍👩‍👧 Contacts</a>
+<a href="report.html">📝 Report Incident</a>
+<a href="profile.html">👤 Profile</a>
+<a href="index.html">🚪 Logout</a>
+
+</div>
+
+<div class="main">
+
+<h1 class="page-title">
+Incident Reporting Center
+</h1>
+
+<div class="report-box">
+
+<h2 style="margin-bottom:20px;">
+Submit Incident
+</h2>
+
+<form id="reportForm">
+
+<input
+type="text"
+id="name"
+placeholder="Full Name"
+required>
+
+<input
+type="text"
+id="location"
+placeholder="Incident Location"
+required>
+
+<select id="category">
+
+<option>Harassment</option>
+<option>Stalking</option>
+<option>Unsafe Area</option>
+<option>Theft</option>
+<option>Violence</option>
+<option>Other</option>
+
+</select>
+
+<textarea
+rows="6"
+id="description"
+placeholder="Describe the incident..."
+required></textarea>
+
+<input
+type="file"
+id="imageUpload"
+accept="image/*">
+
+<img
+id="preview"
+class="preview">
+
+<button
+type="submit"
+class="btn">
+
+Submit Report
+
+</button>
+
+</form>
+
+</div>
+
+<div class="status-box">
+
+<h2 style="margin-bottom:20px;">
+Recent Reports
+</h2>
+
+<div id="reportList"></div>
+
+</div>
+
+</div>
+
+<script>
+
+const imageUpload =
+document.getElementById(
+"imageUpload"
+);
+
+const preview =
+document.getElementById(
+"preview"
+);
+
+imageUpload.addEventListener(
+"change",
+function(){
+
+const file =
+this.files[0];
+
+if(file){
+
+preview.src =
+URL.createObjectURL(file);
+
+preview.style.display =
+"block";
+
+}
+
+}
+);
+
+let reports =
+JSON.parse(
+localStorage.getItem(
+"safeherReports"
+)
+) || [];
+
+document
+.getElementById(
+"reportForm"
+)
+.addEventListener(
+"submit",
+function(e){
+
+e.preventDefault();
+
+const report = {
+
+name:
+document.getElementById(
+"name"
+).value,
+
+location:
+document.getElementById(
+"location"
+).value,
+
+category:
+document.getElementById(
+"category"
+).value,
+
+description:
+document.getElementById(
+"description"
+).value,
+
+status:
+"Pending Review",
+
+date:
+new Date()
+.toLocaleString()
+
+};
+
+reports.push(report);
+
+localStorage.setItem(
+"safeherReports",
+JSON.stringify(reports)
+);
+
+alert(
+"Report Submitted Successfully!"
+);
+
+this.reset();
+
+preview.style.display =
+"none";
+
+renderReports();
+
+}
+);
+
+function renderReports(){
+
+const container =
+document.getElementById(
+"reportList"
+);
+
+container.innerHTML = "";
+
+reports
+.slice()
+.reverse()
+.forEach(report=>{
+
+container.innerHTML += `
+
+<div class="status-card">
+
+<h3>${report.category}</h3>
+
+<p><strong>Location:</strong>
+${report.location}</p>
+
+<p><strong>Status:</strong>
+${report.status}</p>
+
+<p><strong>Date:</strong>
+${report.date}</p>
+
+</div>
+
+`;
+
+});
+
+}
+
+renderReports();
+
+</script>
+
+</body>
+</html>
